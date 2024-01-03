@@ -1,0 +1,107 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int val;
+    Node* prev;
+    Node* next;
+
+    Node(int val) {
+        this->val = val;
+        this->prev = NULL;
+        this->next = NULL;
+    }
+};
+
+void Reverse_koro(Node* tail) {
+    Node* tmp = tail;
+    while (tmp != NULL) {
+        cout << tmp->val << " ";
+        tmp = tmp->prev;
+    }
+    cout << endl;
+}
+
+void Print_Linked_List(Node* head) {
+    Node* tmp = head;
+    while (tmp != NULL) {
+        cout << tmp->val << " ";
+        tmp = tmp->next;
+    }
+    cout << endl;
+}
+
+void insert_head(Node*& head, Node*& tail, int val) {
+    Node* newNode = new Node(val);
+    if (head == NULL) {
+        head = tail = newNode;
+        return;
+    }
+    newNode->next = head;
+    head->prev = newNode;
+    head = newNode;
+}
+
+void insert_tail(Node*& head, Node*& tail, int val) {
+    Node* newNode = new Node(val);
+    if (tail == NULL) {
+        head = tail = newNode;
+        return;
+    }
+    tail->next = newNode;
+    newNode->prev = tail;
+    tail = newNode;
+}
+
+void insert_any_Position(Node*& head, Node*& tail, int pos, int val, int& size) {
+    Node* newNode = new Node(val);
+    if (pos < 0 || pos > size) {
+        cout << "Invalid" << endl;
+        delete newNode; // Free memory in case of an invalid position
+        return;
+    }
+    if (pos == 0) {
+        insert_head(head, tail, val);
+    } else if (pos == size) {
+        insert_tail(head, tail, val);
+    } else {
+        Node* tmp = head;
+        for (int i = 1; i <= pos - 1; i++) {
+            tmp = tmp->next;
+        }
+        newNode->next = tmp->next;
+        tmp->next->prev = newNode;
+        tmp->next = newNode;
+        newNode->prev = tmp;
+    }
+    size++;
+}
+
+int main() {
+    int Q;
+    cin >> Q;
+    Node* head = NULL;
+    Node* tail = NULL;
+    int size = 0;
+
+    while (Q--) {
+        int x, v;
+        cin >> x >> v;
+        insert_any_Position(head, tail, x, v, size);
+        Print_Linked_List(head);
+        if (tail != NULL) {
+            Reverse_koro(tail);
+        }
+    }
+
+    // Deallocate memory
+    Node* tmp = head;
+    while (tmp != NULL) {
+        Node* nextNode = tmp->next;
+        delete tmp;
+        tmp = nextNode;
+    }
+
+    return 0;
+}
